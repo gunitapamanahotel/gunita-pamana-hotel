@@ -845,49 +845,6 @@ nav a:hover{
   box-shadow:0 0 0 3px rgba(176,138,82,.1);
 }
 
-.payment-options{
-  display:grid;
-  gap:12px;
-  margin-top:18px;
-}
-
-.payment-option{
-  border:1px solid #dfd0c2;
-  border-radius:13px;
-  padding:16px;
-  display:flex;
-  gap:12px;
-  align-items:flex-start;
-}
-
-.payment-option.selected{
-  border-color:var(--gold);
-  background:#fbf3e8;
-}
-
-.payment-option input{
-  margin-top:4px;
-}
-
-.payment-option strong{
-  display:block;
-  color:var(--burgundy);
-}
-
-.payment-option span{
-  display:block;
-  color:#6b5d5f;
-  font-size:.8rem;
-  margin-top:4px;
-}
-
-.discount{
-  color:#8c5e14!important;
-  font-weight:800;
-  text-transform:uppercase;
-  letter-spacing:1px;
-}
-
 .policy{
   margin-top:20px;
   padding:16px;
@@ -2301,7 +2258,6 @@ Book Your Stay
 
 <p class="section-intro">
 Complete the form below to request your accommodation.
-Pay Now reservations receive a 10% instant discount.
 </p>
 
 
@@ -2451,109 +2407,14 @@ required
 </div>
 
 
-<h3 style="margin-top:30px;color:var(--burgundy)">
-Booking Guarantee & Payment Type
-</h3>
-
-
-<div class="payment-options">
-
-
-<label class="payment-option selected" id="payNowOption">
-
-<input
-type="radio"
-name="payment"
-value="Pay Now"
-checked
->
-
-<div>
-
-<strong>
-Pay Now — Guaranteed Booking
-</strong>
-
-<span>
-Pay online in advance using GCash, Maya, or a
-credit/debit card and receive a 10% discount.
-Your room is guaranteed and will be reserved for
-you regardless of your arrival time.
-</span>
-
-<span class="discount">
-10% OFF INSTANT DISCOUNT
-</span>
-
-</div>
-
-</label>
-
-
-<label class="payment-option" id="payHotelOption">
-
-<input
-type="radio"
-name="payment"
-value="Pay at Hotel"
->
-
-<div>
-
-<strong>
-Pay at Hotel — Standard Rate
-</strong>
-
-<span>
-Pay upon check-in at the hotel counter at the
-standard rate. Your room will be held until
-6:00 PM unless prior arrangements are made.
-</span>
-
-</div>
-
-</label>
-
-</div>
-
-
-<div id="onlineGateway" style="margin-top:20px">
-
-<div class="field">
-
-<label for="gateway">
-Online Payment Gateway
-</label>
-
-<select id="gateway">
-
-<option>
-GCash
-</option>
-
-<option>
-Maya
-</option>
-
-<option>
-Credit / Debit Card
-</option>
-
-</select>
-
-</div>
-
-</div>
-
-
 <div class="policy">
 
 <strong>
 Cancellation Policy:
 </strong>
 
-For paid or guaranteed bookings, cancellations made at least
-7 days before the check-in date are fully refundable.
+Bookings cancelled at least 7 days before the check-in date
+are fully refundable.
 Cancellations made within 7 days of check-in are subject
 to a 50% cancellation fee.
 
@@ -2671,19 +2532,6 @@ Room Rate
 </div>
 
 
-<div class="summary-line">
-
-<span>
-10% Discount
-</span>
-
-<strong id="sumDiscount">
-₱0
-</strong>
-
-</div>
-
-
 <div class="summary-line total">
 
 <span>
@@ -2697,36 +2545,12 @@ Estimated Total
 </div>
 
 
-<div class="summary-line total">
-
-<span>
-Pay Now Total
-</span>
-
-<strong id="payTotal">
-₱0
-</strong>
-
-</div>
-
-
 <p class="summary-note">
 
-Pay Now applies the 10% instant discount.
-Pay at Hotel uses the standard rate.
+Your estimated total is based on the selected room rate
+and number of nights.
 
 </p>
-
-
-<div class="policy">
-
-<strong>
-Payment:
-</strong>
-
-GCash · Maya · Credit / Debit Card
-
-</div>
 
 </aside>
 
@@ -3010,16 +2834,6 @@ function updateSummary(){
   const standardTotal =
     rate * nights;
 
-  const discount =
-    $("payNowOption")
-      .querySelector("input")
-      .checked
-      ? standardTotal * .10
-      : 0;
-
-  const payNowTotal =
-    standardTotal - discount;
-
 
   $("sumRoom").textContent =
     room || "—";
@@ -3043,40 +2857,8 @@ function updateSummary(){
   $("sumRate").textContent =
     money(standardTotal);
 
-  $("sumDiscount").textContent =
-    discount
-      ? "−" + money(discount)
-      : "₱0";
-
   $("sumTotal").textContent =
     money(standardTotal);
-
-  $("payTotal").textContent =
-    money(payNowTotal);
-
-
-  $("onlineGateway").style.display =
-    $("payNowOption")
-      .querySelector("input")
-      .checked
-      ? "block"
-      : "none";
-
-
-  $("payNowOption").classList.toggle(
-    "selected",
-    $("payNowOption")
-      .querySelector("input")
-      .checked
-  );
-
-
-  $("payHotelOption").classList.toggle(
-    "selected",
-    $("payHotelOption")
-      .querySelector("input")
-      .checked
-  );
 
 }
 
@@ -3094,20 +2876,6 @@ function updateSummary(){
   );
 
 });
-
-
-document
-  .querySelectorAll(
-    'input[name="payment"]'
-  )
-  .forEach(r => {
-
-    r.addEventListener(
-      "change",
-      updateSummary
-    );
-
-  });
 
 
 document
@@ -3206,22 +2974,11 @@ $("bookingForm")
       }
 
 
-      const payment =
-        document
-          .querySelector(
-            'input[name="payment"]:checked'
-          )
-          .value;
-
-
       const standardTotal =
         rates[room] * nights;
 
-
       const total =
-        payment === "Pay Now"
-          ? standardTotal * .90
-          : standardTotal;
+        standardTotal;
 
 
       const reference =
@@ -3299,13 +3056,6 @@ $("bookingForm")
           Number of Guests:
           </strong>
           ${$("guests").value}
-        </p>
-
-        <p>
-          <strong>
-          Payment Type:
-          </strong>
-          ${payment}
         </p>
 
         <p>
